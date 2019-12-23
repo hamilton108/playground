@@ -1,0 +1,9 @@
+ext.springBootTest = 'org.springframework.boot:spring-boot-starter-test'
+ext.springBootActuator = 'org.springframework.boot:spring-boot-starter-actuator'
+ext.springBootWeb = 'org.springframework.boot:spring-boot-starter-web'
+ext.springBootSecurity = 'org.springframework.boot:spring-boot-starter-security'
+ext.springBootData = 'org.springframework.boot:spring-boot-starter-data-jpa'
+ext.springBootRedis = 'org.springframework.boot:spring-boot-starter-data-redis'
+
+ext.jackson = ['com.fasterxml.jackson.core:jackson-core:2.10.1','com.fasterxml.jackson.core:jackson-databind:2.10.1']
+ext.junit4 = 'junit:junit:4.12'

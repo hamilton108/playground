@@ -1,0 +1,75 @@
+sourceSets {
+    integrationTest {
+        java.srcDir file('src/integrationTest/java')
+        resources.srcDir file('src/integrationTest/resources')
+        compileClasspath += main.output + test.output
+        runtimeClasspath += main.output + test.output
+    }
+}
+
+idea {
+    module {
+        testSourceDirs += sourceSets.integrationTest.java.srcDirs
+        testResourceDirs += sourceSets.integrationTest.resources.srcDirs
+        scopes.TEST.plus += [ configurations.integrationTestCompile ]
+    }
+}
+
+task integrationTest(type: Test) {
+    description = 'Runs the integration tests.'
+    group = 'verification'
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    outputs.upToDateWhen { false }
+    mustRunAfter test
+}
+
+check.dependsOn integrationTest
+
+/*
+dependencies {
+    integrationTestCompile sourceSets.main.output
+    integrationTestCompile sourceSets.test.output 
+
+    integrationTestCompile configurations.compile
+    integrationTestCompile configurations.testCompile 
+
+    integrationTestRuntime configurations.runtime
+    integrationTestRuntime configurations.testRuntime 
+}
+
+task integrationTest(type: Test) {
+    group = LifecycleBasePlugin.VERIFICATION_GROUP
+    description = 'Runs the integration tests.' 
+
+    maxHeapSize = '1024m' 
+
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+
+    //binaryResultsDirectory = "$buildDir/integration-test-results/binary/integrationTest"
+
+    reports {
+        html.destination = file("$buildDir/reports/integration-test")
+        junitXml.destination = file("$buildDir/integration-test-results")
+    }
+
+    mustRunAfter tasks.test 
+}
+
+check.dependsOn integrationTest 
+
+gradle.projectsEvaluated {
+    def quickTasks = [] 
+
+    gradle.rootProject.allprojects.each { project -> 
+        quickTasks.addAll(project.tasks.findAll { it.name == 'test' }) 
+        //quickTasks.addAll(project.tasks.withType(Spotbugs))
+        quickTasks.addAll(project.tasks.withType(Pmd)) 
+    }
+
+    quickTasks.each { task ->
+        project.tasks.integrationTest.mustRunAfter task 
+    }
+}
+ */
