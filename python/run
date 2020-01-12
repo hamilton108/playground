@@ -1,0 +1,5 @@
+#!/bin/bash
+
+docker run --name redis1 -d redis:5.0.7-alpine
+
+exit 0

@@ -41,7 +41,7 @@ public class CacheConfig extends CachingConfigurerSupport {
     @ConditionalOnProperty(name = "cache.enabled", havingValue = "true")
     public LettuceConnectionFactory redisConnectionFactory(CacheConfigurationProperties properties) {
         logger.info("Redis (/Lettuce) configuration enabled. With cache timeout " + properties.getTimeoutSeconds() + " seconds.");
-
+        logger.info("Redis host: " + properties.getRedisHost());
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
         redisStandaloneConfiguration.setHostName(properties.getRedisHost());
         redisStandaloneConfiguration.setPort(properties.getRedisPort());

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.test.context.junit4.SpringRunner;
+import playground.dao.CarSearchDAO;
 import playground.dao.DefaultCarSearchDAO;
 import playground.dto.VehicleBrand;
 import playground.dao.MockCarSearchDAO;
@@ -25,17 +26,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = { DefaultCarSearchDAO.class, LettuceConnectionFactory.class })
+@SpringBootTest(classes = { CarSearchDAO.class,
+        DefaultCarSearchDAO.class,
+        LettuceConnectionFactory.class
+})
 public class TestCarSearchRepository {
     private CarSearchRepository carSearchRepository;
 
     @Autowired
-    private DefaultCarSearchDAO defaultCarSearchDAO;
+    private CarSearchDAO carSearchDAO;
+    //private DefaultCarSearchDAO defaultCarSearchDAO;
 
     @BeforeEach
     public void init() {
-        carSearchRepository = new CarSearchRepository(defaultCarSearchDAO);
-        //carSearchRepository = new CarSearchRepository(new MockCarSearchDAO());
+        //carSearchRepository = new CarSearchRepository(carSearchDAO);
+        carSearchRepository = new CarSearchRepository(new MockCarSearchDAO());
     }
 
     @Test

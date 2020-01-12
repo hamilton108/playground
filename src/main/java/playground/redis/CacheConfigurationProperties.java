@@ -1,6 +1,7 @@
 package playground.redis;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cache.annotation.CacheConfig;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +15,9 @@ public class CacheConfigurationProperties {
     private String redisHost;
     private boolean ssl = false;
     private String password;
+    public CacheConfigurationProperties() {
+        System.out.println("Here I am");
+    }
     // Mapping of cacheNames to expira-after-write timeout in seconds
     private Map<String, Long> cacheExpirations = new HashMap<>();
 
