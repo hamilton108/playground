@@ -24,10 +24,10 @@ class Variant(Base):
 class Model(Base):
     def __init__(self,id,name):
         Base.__init__(self,id,name)
-        self.variants = []
+        self.variants = set()
 
     def add_variant(self,model):
-        self.variants.append(model)
+        self.variants.add(model)
 
     def print_me(self):
         print ("\t%s" % self)
@@ -39,12 +39,13 @@ class Model(Base):
         return Model(row[1],row[2])
 
 class Brand(Base):
-    def __init__(self,id,name):
+    def __init__(self,year,id,name):
         Base.__init__(self,id,name)
-        self.models = []
+        self.models = set()
+        self.year = year
 
     def add_model(self,model):
-        self.models.append(model)
+        self.models.add(model)
 
     def print_me(self):
         print (self)
@@ -52,8 +53,8 @@ class Brand(Base):
             m.print_me()
 
     @staticmethod
-    def create(row):
-        return Brand(row[1],row[2])
+    def create(year,row):
+        return Brand(year,row[1],row[2])
 
 def file_name_for(year):
     return "carsearch-%d.txt" % year
@@ -85,7 +86,7 @@ def create_brands(year,items):
     cur_model = None
     for c in items:
         if c[0] == "Brand":
-            cur_brand = Brand.create(c)
+            cur_brand = Brand.create(year,c)
             result.append(cur_brand) 
         elif c[0] == "Model":
             cur_model = Model.create(c)
@@ -121,6 +122,13 @@ def insert_model_names(brands):
             print (mid)
             conn.hsetnx("model:name", mid,m.name)
 
+def insert_variant_names(brands):
+    conn = redis_conn()
+    for b in brands:
+        b.print_me()
+        for m in b.models:
+            for v in m.variants:
+                conn.hsetnx("variant:name", v.id,v.name)
 
 def print_brands(brands):
     for b in brands:
@@ -128,7 +136,9 @@ def print_brands(brands):
 
 def check_unique_variant_ids():
     brands_list = []
+    dups = {}
     for year in range(1999,2020):
+        dups[year] = []
         print (year)
         content = corexml(year)
         brands = create_brands(year,content)
@@ -141,18 +151,69 @@ def check_unique_variant_ids():
             for m in b.models:
                 for v in m.variants:
                     key_list.append(v.id)
+                    if v.id in key_set:
+                        dups[b.year].append(v.id)
                     key_set.add(v.id)
-    print ("List: %d, set: %d" % (len(key_list),len(key_set)))
+    print (dups)
+    """
+    dups = []
+    for x in key_list:
+        if x in key_set:
+            key_set.remove(x)
+        else:
+            dups.append(x)
+    # print ("List: %d, set: %d" % (len(key_list),len(key_set)))
+    print (dups)
+    """
 
-def insert():
+def insert(year):
+    content = corexml(year)
+    brands = create_brands(year,content)
+    #insert_variant_names(brands)
+    # insert_model_names(brands)
+    #print_brands(brands)
+    #insert_brand_names(brands)
+    insert_brand_year(year,brands)
+    print (len(brands))
+
+def demo():
     year = 1999
     content = corexml(year)
     brands = create_brands(year,content)
-    insert_model_names(brands)
     #print_brands(brands)
-    #insert_brand_names(brands)
-    #insert_brand_year(conn,year,brands)
-    print (len(brands))
+    s = set()
+    for b in brands:
+        s.add(b.id)
+    print ("%d == %d" % (len(brands),len(s)))
+    
+
+def insert_brand_models(year):
+    conn = redis_conn()
+    content = corexml(year)
+    brands = create_brands(year,content)
+    for b in brands:
+        b.print_me()
+        items = set()
+        for m in b.models:
+            items.add(m.id)
+        if len(items) > 0:
+            conn.sadd("brand:models:%s" % b.id, *items) 
+        #print (type(b.models).__name__)
+
+def sunion_brands():
+    conn = redis_conn()
+    all_years = range(1999,2020)
+    all_brands = set()
+    for x in all_years:
+        all_brands.add("brand:%d" % x)
+    print (all_brands)
+    conn.sunionstore("brand:all", *all_brands)
+
+
 
 if __name__ == "__main__":
-    check_unique_variant_ids()
+    # check_unique_variant_ids()
+    #demo()
+    #insert(1999)
+    #insert_brand_models(1999)
+    sunion_brands()
