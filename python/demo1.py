@@ -209,6 +209,18 @@ def sunion_brands():
     print (all_brands)
     conn.sunionstore("brand:all", *all_brands)
 
+def insert_models_variants(year):
+    conn = redis_conn()
+    content = corexml(year)
+    brands = create_brands(year,content)
+    for b in brands:
+        b.print_me()
+        for m in b.models:
+            items = set()
+            for v in m.variants:
+                items.add(v.id)
+                if len(items) > 0:
+                    conn.sadd("%s:%s" % (b.id,m.id), *items) 
 
 
 if __name__ == "__main__":
@@ -216,4 +228,5 @@ if __name__ == "__main__":
     #demo()
     #insert(1999)
     #insert_brand_models(1999)
-    sunion_brands()
+    #sunion_brands()
+    insert_models_variants(1999)
