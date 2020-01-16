@@ -3,6 +3,7 @@ package playground.repository;
 import playground.dto.VehicleBrand;
 import playground.dao.CarSearchDAO;
 import playground.dto.VehicleListModel;
+import playground.redis.RedisUtil;
 
 import java.util.*;
 
@@ -15,21 +16,6 @@ public class CarSearchRepository {
 
     public List<VehicleBrand> getBrands() {
         List<VehicleBrand> result = new ArrayList<>();
-
-        /*
-        Map<byte[],byte[]> brands = carSearchDAO.getBrands();
-
-        if (brands != null) {
-            for (Map.Entry<byte[], byte[]> entry : brands.entrySet()) {
-                int key = byte2int(entry.getKey());
-                String v = new String(entry.getValue());
-                VehicleBrand vehicleBrand = new VehicleBrand();
-                vehicleBrand.setBrandName(v);
-                vehicleBrand.setBrandIdentifier(key);
-                result.add(vehicleBrand);
-            }
-        }
-         */
 
         Map<Integer,String> brands = getBrandsNormalized();
         for (Map.Entry<Integer, String> entry : brands.entrySet()) {
@@ -45,6 +31,19 @@ public class CarSearchRepository {
     public List<VehicleListModel> getModels(List<Integer> brandIds) {
         List<VehicleListModel> result = new ArrayList<>();
 
+        int brandId = brandIds.get(0);
+
+        Map<Integer,String> models = carSearchDAO.getModels(brandId);
+
+        for (Map.Entry<Integer,String> item : models.entrySet()) {
+            var vlm = new VehicleListModel();
+            vlm.setModelIdentifier(item.getKey());
+            vlm.setModelName(item.getValue());
+            result.add(vlm);
+        }
+        return result;
+
+        /*
         Map<Integer,Integer> modelBrands = getModelBrandsNormalized();
         Map<Integer,String> modelNames = getModelNamesNormalized();
 
@@ -58,6 +57,8 @@ public class CarSearchRepository {
                 }
             }
         }
+
+         */
 
         /*
         Map<byte[],byte[]> modelBrands = carSearchDAO.getModelsBrandIds();
@@ -79,10 +80,21 @@ public class CarSearchRepository {
             }
         }
          */
+    }
+
+    private Map<Integer,String> getBrandsNormalized() {
+        Map<Integer,String> result = new HashMap<>();
+        Map<byte[],byte[]> brands = carSearchDAO.getBrands();
+
+        if (brands != null) {
+            for (Map.Entry<byte[], byte[]> entry : brands.entrySet()) {
+                result.put(RedisUtil.byte2int(entry.getKey()), RedisUtil.byte2string(entry.getValue()));
+            }
+        }
         return result;
     }
 
-
+    /*
     private Map<Integer,Integer> getModelBrandsNormalized() {
         Map<Integer,Integer> result = new HashMap<>();
 
@@ -103,19 +115,7 @@ public class CarSearchRepository {
 
         return result;
     }
-
-
-    private Map<Integer,String> getBrandsNormalized() {
-        Map<Integer,String> result = new HashMap<>();
-        Map<byte[],byte[]> brands = carSearchDAO.getBrands();
-
-        if (brands != null) {
-            for (Map.Entry<byte[], byte[]> entry : brands.entrySet()) {
-                result.put(byte2int(entry.getKey()), byte2string(entry.getValue()));
-            }
-        }
-        return result;
-    }
+     */
 
     private void printByteMap(Map<byte[], byte[]> map) {
         for (Map.Entry<byte[],byte[]> mb : map.entrySet()) {
@@ -125,12 +125,4 @@ public class CarSearchRepository {
         }
     }
 
-    private String byte2string(byte[] b) {
-        return new String(b);
-    }
-
-    private int byte2int(byte[] b) {
-        String k = new String(b);
-        return Integer.parseInt(k);
-    }
 }

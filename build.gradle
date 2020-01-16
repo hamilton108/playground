@@ -8,10 +8,11 @@ apply plugin: 'java'
 apply plugin: 'idea'
 
 apply from: 'dependencies.gradle'
+//apply from: 'integrationTest.gradle'
 
 group = 'rcstadheim'
 version = '1.0'
-sourceCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
 	mavenCentral()

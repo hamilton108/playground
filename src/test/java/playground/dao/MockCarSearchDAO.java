@@ -3,6 +3,7 @@ package playground.dao;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class MockCarSearchDAO implements CarSearchDAO {
 
@@ -22,6 +23,13 @@ public class MockCarSearchDAO implements CarSearchDAO {
         return result;
     }
 
+    @Override
+    public Map<Integer, String> getModels(int brandId) {
+        return null;
+    }
+
+
+    /*
     @Override
     public Map<byte[], byte[]> getModelsBrandIds() {
         Map<byte[],byte[]> result = new HashMap<>();
@@ -45,5 +53,7 @@ public class MockCarSearchDAO implements CarSearchDAO {
 
         return result;
     }
+
+     */
 
 }

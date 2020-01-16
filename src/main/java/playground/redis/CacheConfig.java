@@ -46,7 +46,7 @@ public class CacheConfig extends CachingConfigurerSupport {
         redisStandaloneConfiguration.setHostName(properties.getRedisHost());
         redisStandaloneConfiguration.setPort(properties.getRedisPort());
         //redisStandaloneConfiguration.setDatabase(properties.getDatabase());
-        redisStandaloneConfiguration.setDatabase(0);
+        redisStandaloneConfiguration.setDatabase(3);
 
         if (!StringUtils.isEmpty(properties.getPassword())){
             redisStandaloneConfiguration.setPassword(properties.getPassword());

@@ -1,11 +1,13 @@
 package playground.dao;
 
 import java.util.Map;
+import java.util.Set;
 
 public interface CarSearchDAO {
     void populateCache();
 
     Map<byte[],byte[]> getBrands();
-    Map<byte[],byte[]> getModelsBrandIds();
-    Map<byte[],byte[]> getModelNames();
+    //Set<byte[]> getModelIds(int brandId);
+    Map<Integer, String> getModels(int brandId);
 }
+

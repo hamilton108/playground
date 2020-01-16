@@ -129,7 +129,7 @@ def insert_brand_models(brands,conn):
     for b in brands:
         items = set()
         for m in b.models:
-            items.add(m.id)
+            items.add("%s:%s" % (b.id,m.id))
         if len(items) > 0:
             conn.sadd("brand:models:%s" % b.id, *items) 
 

@@ -26,7 +26,7 @@ public class Main implements CommandLineRunner {
     public void run(String... args) throws Exception {
         //System.out.println("lettuceConnectionFactory: " + lettuceConnectionFactory.getHostName());
         try {
-            String key = "brands";
+            String key = "brand:name";
             //String key = "s1";
             //System.out.println(redisTemplate.getConnectionFactory().getConnection().ping());
             //redisTemplate.opsForHash().put
