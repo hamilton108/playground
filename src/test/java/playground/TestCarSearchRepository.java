@@ -14,6 +14,7 @@ import playground.dao.DefaultCarSearchDAO;
 import playground.dto.VehicleBrand;
 import playground.dao.MockCarSearchDAO;
 import playground.dto.VehicleListModel;
+import playground.dto.VehicleVariant;
 import playground.repository.CarSearchRepository;
 
 import java.util.ArrayList;
@@ -62,11 +63,23 @@ public class TestCarSearchRepository {
         List<Integer> brandIds = new ArrayList<>();
         brandIds.add(1650);
         List<VehicleListModel> models = carSearchRepository.getModels(brandIds);
-        int expected = 0;
+        int expected = 44;
         assertEquals(expected, models.size(), () -> String.format("Car models size != %d", expected));
 
         //VehicleListModel model = models.get(0);
         //assertEquals("Corvette Model", model.getModelName(), () -> "Car model name != Corvette Model");
+    }
+
+    @Test
+    public void testGetVariants_single_modelid() {
+        int brandId = 1650;
+        int modelId = 16;
+
+        List<VehicleVariant> variants = carSearchRepository.getVariants(brandId, modelId);
+
+        int expected = 43;
+        assertEquals(expected, variants.size(), () -> String.format("Car variants size != %d", expected));
+
     }
 
     /*

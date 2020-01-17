@@ -28,6 +28,11 @@ public class MockCarSearchDAO implements CarSearchDAO {
         return null;
     }
 
+    @Override
+    public Map<Integer, String> getVariants(int brandId, int modelId) {
+        return null;
+    }
+
 
     /*
     @Override

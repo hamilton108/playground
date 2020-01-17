@@ -56,13 +56,23 @@ public class DefaultCarSearchDAO implements CarSearchDAO {
 
         modelIds.toArray(tmp);
 
-        for (byte[] mid : modelIds) {
-            List<byte[]> mnames = redisConnection.hashCommands().hMGet("model:name".getBytes(), tmp);
-            for (byte[] nx : mnames) {
-                System.out.println(RedisUtil.byte2string(nx));
+        List<byte[]> mnames = redisConnection.hashCommands().hMGet("model:name".getBytes(), tmp);
+
+        if (mnames != null) {
+            int i = 0;
+            for (byte[] modelIdStr : modelIds) {
+                byte[] nx = mnames.get(i);
+                if (nx != null) {
+                    String mid = RedisUtil.byte2string(modelIdStr);
+                    String mname = RedisUtil.byte2string(nx);
+                    String[] midx = mid.split(":");
+                    int modelId = Integer.parseInt(midx[1]);
+                    result.put(modelId, mname);
+                }
+                ++i;
             }
-            break;
         }
+
         /*
         byte[][] tmp = new byte[modelIds.size()][];
 
@@ -89,6 +99,37 @@ public class DefaultCarSearchDAO implements CarSearchDAO {
         return result;
     }
 
+    @Override
+    public Map<Integer, String> getVariants(int brandId, int modelId) {
+        Map<Integer, String> result = new HashMap<>();
+
+        Set<byte[]> variantIds = getVariantIds(brandId,modelId);
+
+        RedisConnection redisConnection = lettuceConnectionFactory.getConnection();
+
+        byte[][] tmp = new byte[variantIds.size()][];
+
+        variantIds.toArray(tmp);
+
+        List<byte[]> vnames = redisConnection.hashCommands().hMGet("variant:name".getBytes(), tmp);
+
+        if (vnames != null) {
+            int i = 0;
+            for (byte[] variantIdStr : variantIds) {
+                byte[] nx = vnames.get(i);
+                if (nx != null) {
+                    String vid = RedisUtil.byte2string(variantIdStr);
+                    String vname = RedisUtil.byte2string(nx);
+                    int variantId = Integer.parseInt(vid);
+                    result.put(variantId, vname);
+                }
+                ++i;
+            }
+        }
+
+        return result;
+    }
+
 
     private Set<byte[]> getModelIds(int brandId) {
         RedisConnection redisConnection = lettuceConnectionFactory.getConnection();
@@ -96,6 +137,11 @@ public class DefaultCarSearchDAO implements CarSearchDAO {
         return redisConnection.sMembers(key);
     }
 
+    private Set<byte[]> getVariantIds(int brandId, int modelId) {
+        RedisConnection redisConnection = lettuceConnectionFactory.getConnection();
+        byte[] key = String.format("%d:%d", brandId, modelId).getBytes();
+        return redisConnection.sMembers(key);
+    }
     /*
     @Override
     public Map<byte[], byte[]> getModelsBrandIds() {

@@ -9,5 +9,6 @@ public interface CarSearchDAO {
     Map<byte[],byte[]> getBrands();
     //Set<byte[]> getModelIds(int brandId);
     Map<Integer, String> getModels(int brandId);
+    Map<Integer, String> getVariants(int brandId, int modelId);
 }
 

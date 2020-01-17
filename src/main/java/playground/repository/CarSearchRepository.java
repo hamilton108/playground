@@ -3,6 +3,7 @@ package playground.repository;
 import playground.dto.VehicleBrand;
 import playground.dao.CarSearchDAO;
 import playground.dto.VehicleListModel;
+import playground.dto.VehicleVariant;
 import playground.redis.RedisUtil;
 
 import java.util.*;
@@ -42,44 +43,20 @@ public class CarSearchRepository {
             result.add(vlm);
         }
         return result;
+    }
 
-        /*
-        Map<Integer,Integer> modelBrands = getModelBrandsNormalized();
-        Map<Integer,String> modelNames = getModelNamesNormalized();
+    public List<VehicleVariant> getVariants(int brandId, int modelId) {
+        List<VehicleVariant> result = new ArrayList<>();
 
-        for (Integer brandId : brandIds) {
-            for (Map.Entry<Integer,Integer> mb : modelBrands.entrySet()) {
-                if (brandId.equals(mb.getValue())) {
-                    VehicleListModel model = new VehicleListModel();
-                    model.setModelName(modelNames.get(mb.getKey()));
-                    model.setModelIdentifier(mb.getKey());
-                    result.add(model);
-                }
-            }
+        Map<Integer,String> variants = carSearchDAO.getVariants(brandId, modelId);
+
+        for (Map.Entry<Integer,String> item : variants.entrySet()) {
+            var vv = new VehicleVariant();
+            vv.setVariantIdentifier(item.getKey().toString());
+            vv.setVariantName(item.getValue());
+            result.add(vv);
         }
-
-         */
-
-        /*
-        Map<byte[],byte[]> modelBrands = carSearchDAO.getModelsBrandIds();
-        Map<byte[],byte[]> modelNames = carSearchDAO.getModelNames();
-
-        for (Integer brandId : brandIds) {
-            byte[] key = brandId.toString().getBytes();
-            for (Map.Entry<byte[],byte[]> mb : modelBrands.entrySet()) {
-                System.out.println(String.format("%s == %s?",
-                        Arrays.toString(key),
-                        Arrays.toString(mb.getValue())));
-                if (Arrays.equals(mb.getValue(),key)) {
-                    byte[] curName = modelNames.get(mb.getKey());
-                    VehicleListModel model = new VehicleListModel();
-                    model.setModelName(Arrays.toString(curName));
-                    model.setModelIdentifier(byte2int(mb.getKey()));
-                    result.add(model);
-                }
-            }
-        }
-         */
+        return result;
     }
 
     private Map<Integer,String> getBrandsNormalized() {
