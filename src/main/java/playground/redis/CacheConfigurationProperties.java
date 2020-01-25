@@ -15,6 +15,7 @@ public class CacheConfigurationProperties {
     private String redisHost;
     private boolean ssl = false;
     private String password;
+    private int redisDatabase;
     public CacheConfigurationProperties() {
         System.out.println("Here I am");
     }
@@ -75,5 +76,13 @@ public class CacheConfigurationProperties {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public int getRedisDatabase() {
+        return redisDatabase;
+    }
+
+    public void setRedisDatabase(int redisDatabase) {
+        this.redisDatabase = redisDatabase;
     }
 }

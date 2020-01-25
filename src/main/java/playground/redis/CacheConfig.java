@@ -17,6 +17,8 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.data.redis.serializer.GenericToStringSerializer;
+
 import org.springframework.util.StringUtils;
 
 import java.time.Duration;
@@ -91,15 +93,32 @@ public class CacheConfig extends CachingConfigurerSupport {
 
     @Bean
     @ConditionalOnProperty(name = "cache.enabled", havingValue = "true")
-    public  RedisTemplate<String, Map<String,String>> redisTemplate(RedisConnectionFactory cf) {
-        RedisTemplate<String, Map<String,String>> redisTemplate = new RedisTemplate<>();
+    public  RedisTemplate<String,Object> redisTemplate(RedisConnectionFactory cf) {
+        RedisTemplate<String,Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(cf);
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new StringRedisSerializer());
+        //redisTemplate.setValueSerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new GenericToStringSerializer<>(Integer.class));
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
-        redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+        //redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+        redisTemplate.setHashValueSerializer(new GenericToStringSerializer<>(Integer.class));
         return redisTemplate;
     }
+
+    /*
+    @Bean
+    @ConditionalOnProperty(name = "cache.enabled", havingValue = "true")
+    public RedisTemplate<String,String> redisTemplate1(RedisConnectionFactory cf) {
+        return genericRedisTemplate(cf);
+    }
+    @Bean
+    @ConditionalOnProperty(name = "cache.enabled", havingValue = "true")
+    public RedisTemplate<String,Integer> redisTemplate2(RedisConnectionFactory cf) {
+        return genericRedisTemplate(cf);
+    }
+
+     */
+
 
     @Bean
     @ConditionalOnProperty(name = "cache.enabled", havingValue = "true")
