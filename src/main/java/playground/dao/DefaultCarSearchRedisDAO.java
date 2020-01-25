@@ -25,6 +25,8 @@ public class DefaultCarSearchRedisDAO implements CarSearchRedisDAO {
                                     RedisTemplate<String,Object> redisTemplate) {
         this.lettuceConnectionFactory = lettuceConnectionFactory;
         this.redisTemplate = redisTemplate;
+        System.out.println("lettuceConnectionFactory: " + lettuceConnectionFactory);
+        System.out.println("redisTemplate : " + redisTemplate);
     }
 
     private void demo() {
@@ -187,6 +189,22 @@ public class DefaultCarSearchRedisDAO implements CarSearchRedisDAO {
         }
 
          */
+    }
+
+    @Override
+    public void insertBrandModels(Map<String, Set<String>> brandModels) {
+        SetOperations<String,Object> ops = redisTemplate.opsForSet();
+        for (var entry : brandModels.entrySet()) {
+            ops.add(entry.getKey(), entry.getValue().toArray());
+        }
+    }
+
+    @Override
+    public void insertModelVariants(Map<String, Set<String>> variants) {
+        SetOperations<String,Object> ops = redisTemplate.opsForSet();
+        for (var entry : variants.entrySet()) {
+            ops.add(entry.getKey(), entry.getValue().toArray());
+        }
     }
 
 

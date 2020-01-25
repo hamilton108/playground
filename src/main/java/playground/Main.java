@@ -1,5 +1,6 @@
 package playground;
 
+import ch.qos.logback.core.util.SystemInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -8,6 +9,10 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
+import playground.cron.CronRedisMigrationAssistant;
+import playground.dao.CarSearchCoreDAO;
+import playground.dao.DefaultCarSearchRedisDAO;
+import playground.dao.MockCarSearchCoreDAO;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,8 +49,24 @@ public class Main implements CommandLineRunner {
     }
 
     public void demo8() throws Exception {
-
+        var redisDAO = new DefaultCarSearchRedisDAO(lettuceConnectionFactory,redisTemplate);
+        var coreDAO = new MockCarSearchCoreDAO();
+        var systemInfo = new SystemInfo();
+        var  assistant =
+                new CronRedisMigrationAssistant(CronRedisMigrationAssistant.modelYearsFor(2019), coreDAO, systemInfo);
+        /*
+        var brands = assistant.getBrandYears();
+        System.out.println(brands);
+        redisDAO.insertBrandYears(brands);
+        var models = assistant.getBrandModels();
+        System.out.println(models);
+        redisDAO.insertBrandModels(models);
+         */
+        var variants = assistant.getModelVariants();
+        System.out.println(variants);
+        redisDAO.insertModelVariants(variants);
     }
+
     public void demo7() throws Exception {
         SetOperations<String,Object> set1 = redisTemplate.opsForSet();
         Set<Integer> sx = new HashSet<>();
