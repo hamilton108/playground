@@ -99,6 +99,43 @@ public class CronRedisMigrationAssistant {
         return result;
     }
 
+    public Map<Integer,String> getBrandNames() {
+        Map<Integer,String> result = new HashMap<>();
+
+        for (var brand : getBrands()) {
+            result.put(brand.getId(),brand.getName());
+        }
+
+        return result;
+    }
+
+    public Map<String,String> getModelNames() {
+        Map<String,String> result = new HashMap<>();
+
+        for (var brand : getBrands()) {
+            int bid = brand.getId();
+            for (var model : brand.getModels()) {
+                String key = String.format("%d:%d", bid, model.getId());
+                result.put(key, model.getName());
+            }
+        }
+
+        return result;
+    }
+
+    public Map<String,String> getVariantNames() {
+        Map<String,String> result = new HashMap<>();
+
+        for (var brand : getBrands()) {
+            for (var model : brand.getModels()) {
+                for (var variant : model.getVariants())  {
+                    result.put(variant.getVariantIdentifier(),variant.getVariantName());
+                }
+            }
+        }
+
+        return result;
+    }
 
     /*
     public Map<String,String> getModelKeyNames() {

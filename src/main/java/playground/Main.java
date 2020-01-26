@@ -61,10 +61,20 @@ public class Main implements CommandLineRunner {
         var models = assistant.getBrandModels();
         System.out.println(models);
         redisDAO.insertBrandModels(models);
-         */
         var variants = assistant.getModelVariants();
         System.out.println(variants);
         redisDAO.insertModelVariants(variants);
+        var brandNames = assistant.getBrandNames();
+        System.out.println(brandNames);
+        redisDAO.insertBrandNames(brandNames);
+
+        var modelNames = assistant.getModelNames();
+        System.out.println(modelNames);
+        redisDAO.insertModelNames(modelNames);
+         */
+        var variantNames = assistant.getVariantNames();
+        System.out.println(variantNames);
+        redisDAO.insertVariantNames(variantNames);
     }
 
     public void demo7() throws Exception {

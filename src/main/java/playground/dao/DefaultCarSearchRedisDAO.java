@@ -3,6 +3,7 @@ package playground.dao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SetOperations;
 import org.springframework.stereotype.Component;
@@ -204,6 +205,30 @@ public class DefaultCarSearchRedisDAO implements CarSearchRedisDAO {
         SetOperations<String,Object> ops = redisTemplate.opsForSet();
         for (var entry : variants.entrySet()) {
             ops.add(entry.getKey(), entry.getValue().toArray());
+        }
+    }
+
+    @Override
+    public void insertBrandNames(Map<Integer,String> brandNames) {
+        var ops = redisTemplate.opsForHash();
+        for (var entry : brandNames.entrySet()) {
+            ops.putIfAbsent("brand:name", entry.getKey().toString(), entry.getValue());
+        }
+    }
+
+    @Override
+    public void insertModelNames(Map<String, String> modelNames) {
+        var ops = redisTemplate.opsForHash();
+        for (var entry : modelNames.entrySet()) {
+            ops.putIfAbsent("model:name", entry.getKey(), entry.getValue());
+        }
+    }
+
+    @Override
+    public void insertVariantNames(Map<String, String> variantNames) {
+        var ops = redisTemplate.opsForHash();
+        for (var entry : variantNames.entrySet()) {
+            ops.putIfAbsent("variant:name", entry.getKey(), entry.getValue());
         }
     }
 

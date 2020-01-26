@@ -12,5 +12,10 @@ public interface CarSearchRedisDAO {
     void insertBrandYears(Map<String, Set<Integer>> brandYears);
     void insertBrandModels(Map<String, Set<String>> brandModels);
     void insertModelVariants(Map<String, Set<String>> variants);
+    void insertBrandNames(Map<Integer,String> brandNames);
+
+    void insertModelNames(Map<String, String> modelNames);
+
+    void insertVariantNames(Map<String, String> variantNames);
 }
 
